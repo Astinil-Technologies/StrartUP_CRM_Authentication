@@ -40,7 +40,7 @@ import static ch.qos.logback.core.util.StringUtil.isNullOrEmpty;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Value("282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com")
+    @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
 
     private final AuthenticationManager authenticationManager;
