@@ -1,7 +1,9 @@
 package edutech.backend.service;
 
+import edutech.backend.dto.UpdatedUserDetails;
 import edutech.backend.dto.UserDto;
 import edutech.backend.dto.UsersValidationResponse;
+import edutech.backend.entity.Status;
 import edutech.backend.entity.User;
 import edutech.backend.exception.CustomException;
 import edutech.backend.repository.UserRepository;
@@ -150,8 +152,8 @@ import org.springframework.web.multipart.MultipartFile;
     private UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
+//        userDto.setFirstName(user.getFirstName());
+//        userDto.setLastName(user.getLastName());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setMobile_no(user.getMobileNo());
@@ -197,4 +199,21 @@ import org.springframework.web.multipart.MultipartFile;
 
         log.info("Profile image uploaded successfully for user with ID: {}", userId);
     }
+
+    // for updating user details
+
+
+    @Transactional
+    public void updateUserDetails(Long userId, UpdatedUserDetails updatedUserDetails)
+    {
+      User user=userRepository.findById(userId).orElseThrow(()->new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + userId));
+      Optional.ofNullable(updatedUserDetails.getMobileNo()).ifPresent(user::setMobileNo);
+      Optional.ofNullable(updatedUserDetails.getBio()).ifPresent(user::setBio);
+      Optional.ofNullable(updatedUserDetails.getLocation()).ifPresent(user::setLocation);
+      Optional.ofNullable(updatedUserDetails.getStatus())
+              .ifPresent(status -> user.setStatus(Status.valueOf(status)));
+
+      userRepository.save(user);
+    }
+
 }

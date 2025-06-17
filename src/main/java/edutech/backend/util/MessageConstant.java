@@ -8,6 +8,9 @@ public class MessageConstant {
     public static final String NOT_FOUND = " Not found";
     public static final String UPDATED = " Updated";
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
+
+    public static final String USER_UPDATED_SUCCESSFULLY = "User Details updated successfully";
+
     public static final String USER_REGISTERED_SUCCESSFULLY = "User registered successfully";
     public static final String COURSE_CREATED_SUCCESSFULLY = "Course created successfully";
     public static final String COURSE_DELETED_SUCCESSFULLY = "Course deleted successfully";

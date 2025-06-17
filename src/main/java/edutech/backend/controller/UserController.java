@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+   // @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteUserById(@PathVariable Long id) {
         try {
             userServiceImpl.deleteUserById(id);
@@ -114,5 +114,25 @@ public class UserController {
     public ResponseEntity<UsersValidationResponse> isUsersExist(@RequestBody UsersValidationRequest usersValidationRequest) {
         return ResponseEntity.ok(userServiceImpl.isUsersExistByIds(usersValidationRequest.getUserIds()));
     }
+
+    // update user details
+
+    @PutMapping(path="/{userId}")
+    public ResponseEntity<ApiResponse<Void>> updateUserDetails(@PathVariable Long userId,@RequestBody UpdatedUserDetails updatedUserDetails) {
+        try {
+            userServiceImpl.updateUserDetails(userId,updatedUserDetails);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(MessageConstant.USER_UPDATED_SUCCESSFULLY, null, HttpStatus.OK.value()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error deleting user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        }
+    }
+
+
+
+    //Create (Insert)	201 Created
+    //Update	200 OK or 204 No Content (no body)
+    //Delete	200 OK or 204 No Content
+    //Read (Get)	200 OK
 
 }

@@ -31,15 +31,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+        if (request.getRequestURI().startsWith("/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = extractTokenFromRequest(request);
         try {
             if (Objects.nonNull(token) && isValidJwtFormat(token)) {
                 String username = jwtTokenUtil.extractUsername(token);
 
-                if (request.getRequestURI().startsWith("/auth/")) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
+//                if (request.getRequestURI().startsWith("/auth/")) {
+//                    filterChain.doFilter(request, response);
+//                    return;
+//                }
 
                 // Use a primitive boolean expression here
                 boolean isTokenValid = jwtTokenUtil.validateToken(token, username);

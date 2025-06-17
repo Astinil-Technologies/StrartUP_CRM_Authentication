@@ -101,13 +101,13 @@ public class JwtTokenUtil {
 
 
 
-    public String generateToken(String username, Integer userId, Set<Role> roles) {
+    public String generateToken(String username, Long userId, Set<Role> roles) {
         String[] roleNames = roles.stream()
                 .map(role -> role.getName().name())
                 .toArray(String[]::new);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(username)  // consider it as email or phone not fname or lname as it is generic login for org,emp,admin
                 .claim("roles", roleNames)
                 .claim("id", userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

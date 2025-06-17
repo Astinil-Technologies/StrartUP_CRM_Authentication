@@ -25,11 +25,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = false)
-    private String firstName;
 
-    @Column(nullable = false, unique = false)
-    private String lastName;
+//    @Column(nullable = false, unique = false)
+//    private String firstName;
+//
+//    @Column(nullable = false, unique = false)
+//    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -64,8 +65,8 @@ public class User {
     private Status status;  // TODO : need to update to Online once logged in
 
 
-    public Integer getUserId() {
-        return id.intValue();
+    public Long getUserId() {
+        return id;
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -73,6 +74,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
 
 }
 

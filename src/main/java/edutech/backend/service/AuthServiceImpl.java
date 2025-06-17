@@ -69,9 +69,9 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = new User();
-        user.setFirstName(signupRequest.getFirstName());
-        user.setLastName(signupRequest.getLastName());
-        user.setUsername(signupRequest.getUsername());
+//        user.setFirstName(signupRequest.getFirstName());
+//        user.setLastName(signupRequest.getLastName());
+        user.setUsername(signupRequest.getUsername()); // consider it as email by default
         user.setEmail(signupRequest.getEmail());
         user.setMobileNo(signupRequest.getMobile_no());
 
@@ -85,11 +85,11 @@ public class AuthServiceImpl implements AuthService {
         user.setRoles(userRoles);
         log.debug("Assigning roles to the user: {}", userRoles);
 
-        userRepository.save(user);
+        User savedUser=userRepository.save(user);
         log.info("User registered successfully: {}", user.getUsername());
 
         Map<String, String> tokens = generateTokens(user);
-
+        tokens.put("userId",String.valueOf(savedUser.getUserId()));
         return ApiResponse.successWithTokens(MessageConstant.USER_REGISTERED_SUCCESSFULLY, tokens, HttpStatus.CREATED.value());
     }
 
@@ -217,8 +217,8 @@ public class AuthServiceImpl implements AuthService {
                     User newUser = new User();
                     newUser.setUsername(googleUser.getEmail());
                     newUser.setEmail(googleUser.getEmail());
-                    newUser.setFirstName(googleUser.getFirstName());
-                    newUser.setLastName(googleUser.getLastName());
+//                    newUser.setFirstName(googleUser.getFirstName());
+//                    newUser.setLastName(googleUser.getLastName());
 
                     try {
                         byte[] profileImageBytes = convertImageUrlToBytes(googleUser.getPicture());
