@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-   // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ORG')")
     public ResponseEntity<ApiResponse<Void>> deleteUserById(@PathVariable Long id) {
         try {
             userServiceImpl.deleteUserById(id);
@@ -118,13 +118,14 @@ public class UserController {
     // update user details
 
     @PutMapping(path="/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ORG')")
     public ResponseEntity<ApiResponse<Void>> updateUserDetails(@PathVariable Long userId,@RequestBody UpdatedUserDetails updatedUserDetails) {
         try {
             userServiceImpl.updateUserDetails(userId,updatedUserDetails);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(MessageConstant.USER_UPDATED_SUCCESSFULLY, null, HttpStatus.OK.value()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error deleting user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+                    .body(ApiResponse.error("Error While updating user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
 
