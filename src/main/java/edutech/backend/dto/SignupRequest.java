@@ -9,12 +9,12 @@ import jakarta.validation.constraints.NotEmpty;
 @Data
 @Builder
 public class SignupRequest {
-//    @NotNull(message = "FirstName is required")
-//    @NotEmpty(message = "FirstName cannot be empty")
-//    private String firstName;
-//    @NotNull(message = "LastName is required")
-//    @NotEmpty(message = "LastName cannot be empty")
-//    private String lastName;
+    @NotNull(message = "FirstName is required")
+    @NotEmpty(message = "FirstName cannot be empty")
+    private String firstName;
+    @NotNull(message = "LastName is required")
+    @NotEmpty(message = "LastName cannot be empty")
+    private String lastName;
     @NotNull(message = "Username is required")
     @NotEmpty(message = "Username cannot be empty")
     private String username;

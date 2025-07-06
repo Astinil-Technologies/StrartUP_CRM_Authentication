@@ -11,11 +11,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
 public class UserController {
 
     private final UserServiceImpl userServiceImpl;
@@ -78,6 +79,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<UserDto> getUserProfile(){
+
+        System.out.println("Profile is called");
+        UserDto u = userServiceImpl.getUserProfile();
+        return new  ResponseEntity<UserDto>(u,HttpStatus.OK);
+    }
+
+
     @GetMapping("/user-counts")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<UserServiceImpl.UserCounts>> getUserCounts() {
@@ -103,7 +113,37 @@ public class UserController {
     }
 
 
-    // for Consuming
+    @PostMapping("/update-profile")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        userDto = userServiceImpl.updateUser(userDto);
+        return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
+    }
+    @PutMapping("/status")
+    public ResponseEntity<String> updateUserStatus(@RequestBody Map<String, String> request) {
+        String statusStr = request.get("status");
+        userServiceImpl.updateUserStatus(statusStr);
+        return new ResponseEntity<>("Status updated successfully", HttpStatus.OK);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // EXTRA for Consuming
 
     @GetMapping(path = "/is-exist")
     public ResponseEntity<Boolean> isUserExist(@RequestParam("userId") Long userId) {

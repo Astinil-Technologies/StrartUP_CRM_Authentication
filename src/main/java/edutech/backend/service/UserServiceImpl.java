@@ -9,9 +9,13 @@ import edutech.backend.exception.CustomException;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.util.JwtTokenUtil;
 import edutech.backend.util.MessageConstant;
+import edutech.backend.util.Utility;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -21,6 +25,7 @@ import edutech.backend.entity.Role;
 import jakarta.transaction.Transactional;
 import edutech.backend.repository.RefreshTokenRepository;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -42,24 +47,19 @@ import org.springframework.web.multipart.MultipartFile;
     }
 
     @Override
-    public boolean isUserExistById(Long userId) {
-        return userRepository.existsById(userId);
-    }
-
-    @Override
-    public UsersValidationResponse isUsersExistByIds(List<Long> userIds) {
-        List<Long> validUserIds= userRepository.findAllById(userIds).stream().map(User::getId).toList();
-        List<Long> invalidUserIds = new ArrayList<>(userIds);
-        invalidUserIds.removeAll(validUserIds);
-       return UsersValidationResponse.builder().validUserIds(validUserIds).invalidUserIds(invalidUserIds).build();
-    }
-
-
-    @Override
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + id));
         return convertToDto(user);
+    }
+
+    public UserDto getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        System.out.println(username);
+        User u = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println(u);
+        return convertToDto(u);
     }
 
     @Transactional
@@ -100,7 +100,7 @@ import org.springframework.web.multipart.MultipartFile;
         return new UserCounts(studentCount, adminCount);
     }
 
-
+    @Override
     public byte[] getProfileImage(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException("User not found"));
@@ -152,11 +152,11 @@ import org.springframework.web.multipart.MultipartFile;
     private UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
-//        userDto.setFirstName(user.getFirstName());
-//        userDto.setLastName(user.getLastName());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
-        userDto.setMobile_no(user.getMobileNo());
+        userDto.setMobileNo(user.getMobileNo());
         userDto.setRoles(user.getRoles().stream()
                 .map(role -> role.getName().name())
                 .collect(Collectors.toSet()));
@@ -166,6 +166,7 @@ import org.springframework.web.multipart.MultipartFile;
         private String encodeImageToBase64(byte[] imageData) {
             return Base64.getEncoder().encodeToString(imageData);
     }
+    @Override
     public void uploadProfileImage(Long userId, MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new CustomException("File is empty. Please select a valid image.");
@@ -200,20 +201,78 @@ import org.springframework.web.multipart.MultipartFile;
         log.info("Profile image uploaded successfully for user with ID: {}", userId);
     }
 
+
+    public UserDto updateUserStatus(String status) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Convert string to Status enum
+        try {
+            String formattedStatus = status.replace(' ', '_').toUpperCase();
+            user.setStatus(Status.valueOf(formattedStatus));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status value");
+        }
+
+        User updatedUser = userRepository.save(user);
+        return convertToDto(updatedUser);
+    }
+
+    @Override
+    public UserDto updateUser(UserDto userDto) {
+        String email = userDto.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MessageConstant.INVALID_TOKEN_OR_USER_NOT_FOUND));
+
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setMobileNo(userDto.getMobileNo());
+        user.setBio(userDto.getBio());
+        user.setLocation(userDto.getLocation());
+
+        if (userDto.getProfileImage() != null) {
+            user.setProfileImage(Utility.decodeBase64ToImage(userDto.getProfileImage()));
+        }
+
+        user = userRepository.save(user);
+        return user.mapUserToDto(user);
+    }
+
+
+    //************* EXTRA
+
     // for updating user details
 
 
     @Transactional
     public void updateUserDetails(Long userId, UpdatedUserDetails updatedUserDetails)
     {
-      User user=userRepository.findById(userId).orElseThrow(()->new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + userId));
-      Optional.ofNullable(updatedUserDetails.getMobileNo()).ifPresent(user::setMobileNo);
-      Optional.ofNullable(updatedUserDetails.getBio()).ifPresent(user::setBio);
-      Optional.ofNullable(updatedUserDetails.getLocation()).ifPresent(user::setLocation);
-      Optional.ofNullable(updatedUserDetails.getStatus())
-              .ifPresent(status -> user.setStatus(Status.valueOf(status)));
+        User user=userRepository.findById(userId).orElseThrow(()->new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + userId));
+        Optional.ofNullable(updatedUserDetails.getMobileNo()).ifPresent(user::setMobileNo);
+        Optional.ofNullable(updatedUserDetails.getBio()).ifPresent(user::setBio);
+        Optional.ofNullable(updatedUserDetails.getLocation()).ifPresent(user::setLocation);
+        Optional.ofNullable(updatedUserDetails.getStatus())
+                .ifPresent(status -> user.setStatus(Status.valueOf(status)));
 
-      userRepository.save(user);
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean isUserExistById(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
+    @Override
+    public UsersValidationResponse isUsersExistByIds(List<Long> userIds) {
+        List<Long> validUserIds= userRepository.findAllById(userIds).stream().map(User::getId).toList();
+        List<Long> invalidUserIds = new ArrayList<>(userIds);
+        invalidUserIds.removeAll(validUserIds);
+        return UsersValidationResponse.builder().validUserIds(validUserIds).invalidUserIds(invalidUserIds).build();
     }
 
 }
