@@ -5,6 +5,7 @@ import edutech.backend.filter.JwtRequestFilter;
 import edutech.backend.service.CustomUserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -42,9 +43,10 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-               // .cors(Customizer.withDefaults())
+              //  .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ this line
                         .requestMatchers("/auth/**",
                                 "/api/v1/users/request-password-reset",
                                 "/api/v1/users/reset-password").permitAll()
