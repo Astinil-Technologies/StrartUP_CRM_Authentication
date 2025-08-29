@@ -7,17 +7,17 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
 
-    security:
-      oauth2:
-        client:
-          registration:
-            google:
-              client-id: ${GOOGLE_CLIENT_ID}  #510806286337-c603u13aelne23ihbjdrurgm3r8r2ibn.apps.googleusercontent.com
-              client-secret: ${GOOGLE_CLIENT_SECRET}  #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
-              scope: profile, email
-              redirect-uri: http://localhost:8080/login/oauth2/code/google
-              authorization-grant-type: authorization_code
-              client-name: Google
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com"
+            client-secret: "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"
+            scope: profile, email
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            authorization-grant-type: authorization_code
+            client-name: Google
 
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
@@ -30,11 +30,11 @@ spring:
             client-secret: ${GITHUB_CLIENT_SECRET}
             redirect-uri: ${GITHUB_REDIRECT_URI}
 
-    datasource:
-      url: jdbc:mysql://localhost:3306/startup_crm
-      username: ${DB_USERNAME}
-      password: ${DB_PASSWORD}
-      driver-class-name: com.mysql.cj.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://localhost:3306/authentication
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -42,22 +42,22 @@ spring:
     show-sql: false
     open-in-view: false
 
-    mail:
-      host: smtp.gmail.com
-      port: 587
-      username: ${MAIL_USERNAME}
-      password: ${MAIL_PASSWORD}
-      properties:
-        mail:
-          smtp:
-            auth: true
-            starttls:
-              enable: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
-  jwt:
-    secretKey: ${JWT_SECRET}
-    expirationMs: 3600000  # Token expiration in milliseconds (1 hour)
-    refreshExpirationMs: 86400000  # Refresh token expiration (24 hours)
+jwt:
+  secretKey: lvzCf61j4U9su4FSyzzjRS6yOVKwUCwxxS9y59h5rGQ=
+  expirationMs: 3600000  # Token expiration in milliseconds (1 hour)
+  refreshExpirationMs: 86400000  # Refresh token expiration (24 hours)
 
 server:
   port: 8082
