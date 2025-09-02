@@ -53,6 +53,6 @@ spring:
             enable: true
 
   jwt:
-    secretKey: q+9hkpFYOj74VjvWkqlex5CWpbfMTVuEXBW5TaOsjy4=
+    secretKey: ${JWT_SECRET}
     expirationMs: 3600000
     refreshExpirationMs: 86400000
