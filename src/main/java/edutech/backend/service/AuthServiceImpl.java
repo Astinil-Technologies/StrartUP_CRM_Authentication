@@ -40,7 +40,7 @@ import static ch.qos.logback.core.util.StringUtil.isNullOrEmpty;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Value("${GOOGLE_CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
     private final AuthenticationManager authenticationManager;
