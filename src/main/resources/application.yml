@@ -31,9 +31,9 @@ spring:
             redirect-uri: ${GITHUB_REDIRECT_URI}
 
   datasource:
-    url: jdbc:mysql://localhost:3306/authentication
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/startup_crm
+    username: "root"
+    password: "MyNewRootPass123!"
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -45,8 +45,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: "anandshaha8825@gmail.com"
+    password: "ndawiqfquciifcqv"
     properties:
       mail:
         smtp:
@@ -61,6 +61,7 @@ jwt:
 
 server:
   port: 8082
+  address: 0.0.0.0
 
 eureka:
   client:
