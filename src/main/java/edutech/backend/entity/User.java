@@ -28,11 +28,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = false)
-    private String firstName;
-
-    @Column(nullable = false, unique = false)
-    private String lastName;
+//    @Column(nullable = false, unique = false)
+//    private String firstName;
+//
+//    @Column(nullable = false, unique = false)
+//    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -51,9 +51,9 @@ public class User {
 
    // extra feilds
 
-    private String bio;
-
-    private String location;
+//    private String bio;
+//
+//    private String location;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -63,6 +63,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
         this.status = Status.OFFLINE;
     }
+
     @Enumerated(EnumType.STRING)
     private Status status;  // TODO : need to update to Online once logged in
 
@@ -80,12 +81,12 @@ public class User {
     public UserDto mapUserToDto(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
+       // dto.setFirstName(user.getFirstName());
+       // dto.setLastName(user.getLastName());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setMobileNo(user.getMobileNo());
-        dto.setLocation(user.getLocation());
+       // dto.setLocation(user.getLocation());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setProfileImage(user.getProfileImage() != null ? Utility.encodeImageToBase64(user.getProfileImage()) : null);
         return dto;

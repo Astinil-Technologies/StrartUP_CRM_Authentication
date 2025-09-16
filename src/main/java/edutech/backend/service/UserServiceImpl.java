@@ -152,8 +152,8 @@ import org.springframework.web.server.ResponseStatusException;
     private UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
+//        userDto.setFirstName(user.getFirstName());
+//        userDto.setLastName(user.getLastName());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setMobileNo(user.getMobileNo());
@@ -227,13 +227,13 @@ import org.springframework.web.server.ResponseStatusException;
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MessageConstant.INVALID_TOKEN_OR_USER_NOT_FOUND));
 
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
+//        user.setFirstName(userDto.getFirstName());
+//        user.setLastName(userDto.getLastName());
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
         user.setMobileNo(userDto.getMobileNo());
-        user.setBio(userDto.getBio());
-        user.setLocation(userDto.getLocation());
+//        user.setBio(userDto.getBio());
+//        user.setLocation(userDto.getLocation());
 
         if (userDto.getProfileImage() != null) {
             user.setProfileImage(Utility.decodeBase64ToImage(userDto.getProfileImage()));
@@ -254,8 +254,8 @@ import org.springframework.web.server.ResponseStatusException;
     {
         User user=userRepository.findById(userId).orElseThrow(()->new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + userId));
         Optional.ofNullable(updatedUserDetails.getMobileNo()).ifPresent(user::setMobileNo);
-        Optional.ofNullable(updatedUserDetails.getBio()).ifPresent(user::setBio);
-        Optional.ofNullable(updatedUserDetails.getLocation()).ifPresent(user::setLocation);
+       // Optional.ofNullable(updatedUserDetails.getBio()).ifPresent(user::setBio);
+       // Optional.ofNullable(updatedUserDetails.getLocation()).ifPresent(user::setLocation);
         Optional.ofNullable(updatedUserDetails.getStatus())
                 .ifPresent(status -> user.setStatus(Status.valueOf(status)));
 

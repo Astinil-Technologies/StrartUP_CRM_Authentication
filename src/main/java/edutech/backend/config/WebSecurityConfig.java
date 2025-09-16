@@ -50,7 +50,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**",
                                 "/api/v1/users/request-password-reset",
                                 "/api/v1/users/reset-password").permitAll()
-                        .requestMatchers("/api/v1/users/**") .hasAnyRole("USER", "ADMIN","MGR", "INSTRUCTOR","ORG")
+                        .requestMatchers("/api/v1/users/**") .hasAnyRole( "ADMIN","ORG","EMP","EMP_MGR","EMP_HR", "INSTRUCTOR")
                         .anyRequest().authenticated())
                 .oauth2Login(Customizer.withDefaults())
                 .userDetailsService(customUserDetailsService)
