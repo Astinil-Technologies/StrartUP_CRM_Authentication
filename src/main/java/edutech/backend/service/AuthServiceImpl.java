@@ -77,7 +77,7 @@ public class AuthServiceImpl implements AuthService {
 
         // extra properties
        // user.setBio(signupRequest.getBio());
-        // user.setLocation(signupRequest.getLocation());
+         user.setLocation(signupRequest.getLocation());
 
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
