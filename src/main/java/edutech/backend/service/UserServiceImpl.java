@@ -1,11 +1,14 @@
 package edutech.backend.service;
 
+import edutech.backend.dto.ApiResponse;
 import edutech.backend.dto.UpdatedUserDetails;
 import edutech.backend.dto.UserDto;
 import edutech.backend.dto.UsersValidationResponse;
+import edutech.backend.dto.emp.EmployeeResponse;
 import edutech.backend.entity.Status;
 import edutech.backend.entity.User;
 import edutech.backend.exception.CustomException;
+import edutech.backend.feignClient.CrmService;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.util.JwtTokenUtil;
 import edutech.backend.util.MessageConstant;
@@ -14,6 +17,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +41,7 @@ import org.springframework.web.server.ResponseStatusException;
     private final JwtTokenUtil jwtUtil;
     private final EmailServiceImpl emailService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private  final CrmService crmService;
 
 
     @Override
@@ -58,8 +63,25 @@ import org.springframework.web.server.ResponseStatusException;
         String username = authentication.getName();
         System.out.println(username);
         User u = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        UserDto userDto=convertToDto(u);
+
+        if (authentication.getAuthorities().stream().anyMatch(role -> "ROLE_EMP".equalsIgnoreCase(role.getAuthority()) || "ROLE_MGR".equalsIgnoreCase(role.getAuthority()))) {
+            ResponseEntity<ApiResponse<EmployeeResponse>> result = crmService.getEmployeeByUserId();
+
+            if (200 != result.getStatusCode().value()) {
+                throw new RuntimeException("failed to fetch employee details from crm service.");
+            }
+            Optional.ofNullable(result.getBody())
+                    .map(ApiResponse::getData)
+                    .ifPresent(res ->
+                    {
+                        userDto.setFirstName(res.getFirstname());
+                        userDto.setLastName(res.getLastName());
+                    });
+        }
+
         System.out.println(u);
-        return convertToDto(u);
+        return userDto;
     }
 
     @Transactional

@@ -81,7 +81,6 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getUserProfile(){
-
         System.out.println("Profile is called");
         UserDto u = userServiceImpl.getUserProfile();
         return new  ResponseEntity<UserDto>(u,HttpStatus.OK);

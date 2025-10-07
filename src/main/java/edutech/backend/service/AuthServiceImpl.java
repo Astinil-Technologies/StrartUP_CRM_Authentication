@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
         user.setMobileNo(signupRequest.getMobile_no());
 
         // extra properties
-       // user.setBio(signupRequest.getBio());
+          user.setBio(signupRequest.getBio());
          user.setLocation(signupRequest.getLocation());
 
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));

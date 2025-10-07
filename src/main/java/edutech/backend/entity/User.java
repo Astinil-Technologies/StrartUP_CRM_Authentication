@@ -48,8 +48,8 @@ public class User {
 
    // extra feilds
 
-//    private String bio;
-//
+    private String bio;
+
     private String location;
 
     @Column(nullable = false, updatable = false)
@@ -80,7 +80,7 @@ public class User {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setMobileNo(user.getMobileNo());
-       // dto.setLocation(user.getLocation());
+        dto.setLocation(user.getLocation());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setProfileImage(user.getProfileImage() != null ? Utility.encodeImageToBase64(user.getProfileImage()) : null);
         return dto;
