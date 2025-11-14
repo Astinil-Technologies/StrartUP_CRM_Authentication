@@ -105,10 +105,12 @@ public class JwtTokenUtil {
         String[] roleNames = roles.stream()
                 .map(role -> role.getName().name())
                 .toArray(String[]::new);
+        String primaryRole = roleNames.length > 0 ? roleNames[0] : "ROLE_USER";
 
         return Jwts.builder()
                 .setSubject(username)  // consider it as email or phone not fname or lname as it is generic login for org,emp,admin
                 .claim("roles", roleNames)
+                .claim("role", primaryRole)
                 .claim("id", userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
